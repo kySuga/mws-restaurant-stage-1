@@ -143,6 +143,10 @@ nav h1 a {
 }
 
 /* ====================== Map ====================== */
+.leaflet-top, .leaflet-bottom {
+  z-index: 999; /* Originally set to 1000 and would go over header with scroll */
+}
+
 #map-container {
 	width: 100%;
 }
@@ -235,7 +239,6 @@ nav h1 a {
 
 #restaurants-list li a {
   background-color: #ffa500;
-  border-bottom: 3px solid #eee;
   color: #fff;
   display: inline-block;
   font-size: 1.3em;
@@ -272,7 +275,7 @@ nav h1 a {
   /* background-color: #ccc;
   height: 100%;
   width: 100%; */
-	margin-top: 13em;
+	margin-top: 11em;
 }
 
 /* .inside #footer {
