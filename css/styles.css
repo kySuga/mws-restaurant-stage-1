@@ -20,6 +20,9 @@ body {
 	background-color: #fdfdfd;
 	margin: 0;
 	position:relative;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 ul,
@@ -414,6 +417,15 @@ nav h1 a {
 		margin: 1.5em;
 	}
 
+@media only screen and (min-width: 880px) {
+  #restaurant-container {
+    width: 100%;
+  }
+	#restaurant-img {
+		width: 100%;
+    height: 450px;
+    object-fit: cover;
+	}
 
 @media only screen and (min-width: 1081px) {
   #restaurants-list li, #reviews-list li {
