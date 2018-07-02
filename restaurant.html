@@ -10,8 +10,6 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ==" crossorigin=""/>
     <!-- Main CSS file -->
     <link rel="stylesheet" href="css/styles.css">
-    <!-- Link for Service Worker -->
-    <link rel="serviceworker" href="/sw.js">
     <title>Restaurant Info</title>
   </head>
 
@@ -19,13 +17,17 @@
     <!-- Beginning header -->
     <header class="container">
       <!-- Beginning nav -->
-      <nav>
+      <nav id="main-nav">
         <h1><a href="/">Restaurant Reviews</a></h1>
       </nav>
       <!-- Beginning breadcrumb -->
-      <ul id="breadcrumb" >
-        <li><a href="/">Home</a></li>
-      </ul>
+      <nav aria-label="Breadcrumb" id="breadcrumb">
+      <ol id="breadcrumb-nav">
+        <li>
+          <a href="/" aria-current="page">Home</a>
+        </li>
+      </ol>
+      </nav>
       <!-- End breadcrumb -->
       <!-- End nav -->
     </header>
