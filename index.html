@@ -23,15 +23,15 @@
 
     <main id="maincontent" class="container">
       <section id="map-container">
-        <div id="map" aria-role="application"></div>
+        <div id="map" aria-label="location" role="application"></div>
       </section>
       <section>
         <div class="filter-options" aria-labelledby="neighborhoods-select">
           <h2>Filter Results</h2>
-          <select id="neighborhoods-select" tabindex="-1" name="neighborhoods" onchange="updateRestaurants()">
+          <select id="neighborhoods-select" tabindex="-1" name="neighborhoods" aria-label="Choose a neighborhood" onchange="updateRestaurants()">
             <option value="all">All Neighborhoods</option>
           </select>
-          <select id="cuisines-select" name="cuisines" onchange="updateRestaurants()">
+          <select id="cuisines-select" name="cuisines" aria-label="Choose a cuisine" onchange="updateRestaurants()">
             <option value="all">All Cuisines</option>
           </select>
         </div>
