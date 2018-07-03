@@ -28,7 +28,7 @@ self.addEventListener('install', installEvent => {
 self.addEventListener('fetch', fetchEvent => {
   const request = fetchEvent.request;
   fetchEvent.respondWith(
-    caches.match(request)
+    caches.match(request, {ignoreSearch: true})
     .then( responseFromCache => {
       if (responseFromCache) {
         return responseFromCache;
