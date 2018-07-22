@@ -15,20 +15,39 @@ class DBHelper {
   /**
    * Fetch all restaurants.
    */
-  static fetchRestaurants(callback) {
-    let xhr = new XMLHttpRequest();
-    xhr.open('GET', DBHelper.DATABASE_URL);
-    xhr.onload = () => {
-      if (xhr.status === 200) { // Got a success response from server!
-        const json = JSON.parse(xhr.responseText);
-        const restaurants = json;
-        callback(null, restaurants);
-      } else { // Oops!. Got an error from server.
-        const error = (`Request failed. Returned status of ${xhr.status}`);
-        callback(error, null);
-      }
-    };
-    xhr.send();
+  static fetchRestaurants(callback, id) {
+    let restaurantInfo;
+    const contentTransfer = DBHelper.DATABASE_URL;
+    if (!id) {
+      restaurantInfo = `${contentTransfer}`;
+    } else {
+      restaurantInfo = `${contentTransfer}/${id}`;
+    }
+    fetch(restaurantInfo)
+      .then(response => {
+        response.json()
+        .then(restaurants => {
+          console.log("restaurants JSON: ", restaurants);
+          callback(null, restaurants);
+        });
+      })
+      .catch(error => {
+        callback(`Request failed. Failed due to following error: ${error}`, null);
+      });
+// Code below is old XHR code
+    // let xhr = new XMLHttpRequest();
+    // xhr.open('GET', DBHelper.DATABASE_URL);
+    // xhr.onload = () => {
+    //   if (xhr.status === 200) { // Got a success response from server!
+    //     const json = JSON.parse(xhr.responseText);
+    //     const restaurants = json;
+    //     callback(null, restaurants);
+    //   } else { // Oops!. Got an error from server.
+    //     const error = (`Request failed. Returned status of ${xhr.status}`);
+    //     callback(error, null);
+    //   }
+    // };
+    // xhr.send();
   }
 
   /**
@@ -149,6 +168,8 @@ class DBHelper {
   /**
    * Restaurant image URL.
    */
+   // Added if statement stating if photograph is not assigned restaurant.photograph
+   // then return the noimage.png, else return the assigned restaurant.photograph
   static imageUrlForRestaurant(restaurant) {
     if (!restaurant.photograph) {
       return (`/img/noimage.png`);
