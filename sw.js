@@ -1,5 +1,5 @@
 // cache version variable
-const version = 'v1';
+const version = 'restaurantCache-v1';
 // staticAssetsCache is a cache for all static assets such as CSS, JS, images, etc.
 const staticAssetsCache = version + 'staticassets';
 // Static assets to be cached
