@@ -1,28 +1,3 @@
-
-// Add idb
-const dbPromise = idb.open('restaurant-db', 1, upgradeDb => {
-  const restaurantStore = upgradeDb.createObjectStore('restaurants', { keyPath: 'id' });
-  restaurantStore.createIndex('by-address', 'address');
-  restaurantStore.createIndex('by-name', 'name');
-});
-
-dbPromise.then(db => {
-  DBHelper.fetchRestaurants((error, restaurants) => {
-    if (error) {
-      callback(error, null);
-    } else {
-      const tx = db.transaction('restaurants', 'readwrite');
-      const foodStore = tx.objectStore('restaurants');
-
-      for (let restaurant in restaurants) {
-        foodStore.put(restaurants[restaurant]);
-      }
-
-      return tx.complete;
-    }
-  });
-});
-
 /**
  * Common database helper functions.
  */
@@ -218,3 +193,28 @@ class DBHelper {
   }
 
 }
+
+
+
+// Add idb
+const dbPromise = idb.open('restaurant-db', 1, upgradeDb => {
+  const restaurantStore = upgradeDb.createObjectStore('restaurants', { keyPath: 'id' });
+  restaurantStore.createIndex('by-address', 'address');
+});
+
+dbPromise.then(db => {
+  DBHelper.fetchRestaurants((error, restaurants) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      const tx = db.transaction('restaurants', 'readwrite');
+      const foodStore = tx.objectStore('restaurants');
+
+      for (let restaurant in restaurants) {
+        foodStore.put(restaurants[restaurant]);
+      }
+
+      return tx.complete;
+    }
+  });
+});

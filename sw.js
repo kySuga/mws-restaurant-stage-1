@@ -8,7 +8,7 @@ const cachedAssets = [
   '/restaurant.html',
   '/css/reset.css',
   '/css/styles.css',
-  '/data/restaurants.json',
+  // '/data/restaurants.json',
   '/js/main.js',
   '/js/restaurant_info.js'
 ];
