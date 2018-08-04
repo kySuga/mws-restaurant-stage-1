@@ -34,20 +34,6 @@ class DBHelper {
       .catch(error => {
         callback(`Request failed. Failed due to following error: ${error}`, null);
       });
-// Code below is old XHR code
-    // let xhr = new XMLHttpRequest();
-    // xhr.open('GET', DBHelper.DATABASE_URL);
-    // xhr.onload = () => {
-    //   if (xhr.status === 200) { // Got a success response from server!
-    //     const json = JSON.parse(xhr.responseText);
-    //     const restaurants = json;
-    //     callback(null, restaurants);
-    //   } else { // Oops!. Got an error from server.
-    //     const error = (`Request failed. Returned status of ${xhr.status}`);
-    //     callback(error, null);
-    //   }
-    // };
-    // xhr.send();
   }
 
   /**
@@ -194,27 +180,41 @@ class DBHelper {
 
 }
 
-
-
 // Add idb
-const dbPromise = idb.open('restaurant-db', 1, upgradeDb => {
-  const restaurantStore = upgradeDb.createObjectStore('restaurants', { keyPath: 'id' });
+const dbPromise = idb.open('restaurant-db', 1, upgradeDB => {
+  let restaurantStore = upgradeDB.createObjectStore('restaurants', { keyPath: 'id' });
   restaurantStore.createIndex('by-address', 'address');
+  restaurantStore.createIndex('by-name', 'name');
 });
 
+// fetch restaurant data and put it in objectStore
 dbPromise.then(db => {
   DBHelper.fetchRestaurants((error, restaurants) => {
     if (error) {
       callback(error, null);
     } else {
       const tx = db.transaction('restaurants', 'readwrite');
-      const foodStore = tx.objectStore('restaurants');
+      let restaurantStore = tx.objectStore('restaurants');
 
       for (let restaurant in restaurants) {
-        foodStore.put(restaurants[restaurant]);
+        restaurantStore.put(restaurants[restaurant]);
       }
 
       return tx.complete;
     }
   });
 });
+
+// dbPromise.then(db => {
+//   const tx = db.transaction('restaurants', 'readonly');
+//   let restaurantStore = tx.objectStore('restaurants');
+//
+//   for (let restaurant in restaurants) {
+//     restaurantStore.get(restaurants[restaurant]);
+//     debugger;
+//   }
+//
+//   return restaurantStore.getAll();
+// }).then((restaurants) => {
+//   console.log('Restaurant:', restaurants);
+// });

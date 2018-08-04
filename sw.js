@@ -6,9 +6,9 @@ const staticAssetsCache = version + 'staticassets';
 const cachedAssets = [
   '/',
   '/restaurant.html',
+  '/manifest.json',
   '/css/reset.css',
   '/css/styles.css',
-  // '/data/restaurants.json',
   '/js/main.js',
   '/js/restaurant_info.js'
 ];
