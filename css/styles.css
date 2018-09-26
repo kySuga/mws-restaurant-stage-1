@@ -272,6 +272,21 @@ nav#main-nav h1 a {
 	background-color: #db781c;
 }
 
+/* ====================== Restaurant Favorite Button ====================== */
+.fav-btn {
+  margin-bottom: 10px;
+  font-size: 25px;
+  height: 40px;
+  width: 40px;
+  border: none;
+  color: #d4d4d4;
+}
+
+.fav_yum {
+  color: #dc4c4c;
+  font-size: 30px;
+}
+
 /* ====================== Restaurant Details ====================== */
 .inside header {
   position: fixed;
@@ -401,6 +416,11 @@ nav#main-nav h1 a {
 	text-transform: uppercase;
 	letter-spacing: 1px;
 	text-align: center;
+}
+
+/* ====================== Restaurant Review Form ====================== */
+textarea {
+  resize: none;
 }
 
 /* ====================== TABLET TO DESKTOP ====================== */
