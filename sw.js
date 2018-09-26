@@ -5,11 +5,13 @@ const staticAssetsCache = version + 'staticassets';
 // Static assets to be cached
 const cachedAssets = [
   '/',
+  '/index.html',
   '/restaurant.html',
   '/manifest.json',
   '/css/reset.css',
   '/css/styles.css',
   '/js/main.js',
+  '/js/dbhelper.js',
   '/js/restaurant_info.js'
 ];
 
