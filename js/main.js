@@ -1,3 +1,9 @@
+/**
+ * Credit and huge shout out goes to Elisa Romondia, Lorenzo Zaccagnini, Doug Brown, among
+ * others for their webinars. Other resources include MDN, and various other random links
+ * from googling.
+ **/
+
 let restaurants,
   neighborhoods,
   cuisines
@@ -154,6 +160,21 @@ createRestaurantHTML = (restaurant) => {
   name.innerHTML = restaurant.name;
   li.append(name);
 
+/**
+ * Create button for favorite
+ */
+  const favRestaurant = document.createElement('button');
+  favRestaurant.innerHTML = '&#9829;'; // &#x2661; > heart outline, &#9829; > solid heart
+  favRestaurant.classList.add('fav-btn');
+  favRestaurant.onclick = function() {
+    const favorite = !restaurant.is_favorite;
+    DBHelper.updateFavoriteStatus(restaurant.id, favorite);
+    restaurant.is_favorite = !restaurant.is_favorite
+    changeStateForFavorite(favRestaurant, restaurant.is_favorite)
+  };
+  changeStateForFavorite(favRestaurant, restaurant.is_favorite)
+  li.append(favRestaurant);
+
   const neighborhood = document.createElement('p');
   neighborhood.innerHTML = restaurant.neighborhood;
   li.append(neighborhood);
@@ -170,6 +191,19 @@ createRestaurantHTML = (restaurant) => {
   li.append(more)
 
   return li
+}
+
+// state changes for favorite button
+changeStateForFavorite = (el, fav) => {
+  if (!fav) {
+    el.classList.remove('fav_yum');
+    el.classList.add('fav_notyum');
+    el.setAttribute('aria-label', 'mark as favorite');
+  } else {
+    el.classList.remove('fav_notyum');
+    el.classList.add('fav_yum');
+    el.setAttribute('aria-label', 'remove as favorite');
+  }
 }
 
 /**

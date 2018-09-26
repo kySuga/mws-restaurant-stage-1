@@ -1,4 +1,10 @@
 /**
+ * Credit and huge shout out goes to Elisa Romondia, Lorenzo Zaccagnini, Doug Brown, among
+ * others for their webinars. Other resources include MDN, and various other random links
+ * from googling.
+ **/
+
+/**
  * Common database helper functions.
  */
 class DBHelper {
@@ -11,6 +17,44 @@ class DBHelper {
     const port = 1337 // Change this to your server port
     return `http://localhost:${port}/restaurants`;
   }
+
+  /**
+   * Add idb
+   **/
+    static dbPromise() {
+      return idb.open('restaurant-db', 2, upgradeDb => {
+        switch (upgradeDb.replaceVersion) {
+          case 0:
+            const restaurantStore = upgradeDb.createObjectStore('restaurants', {
+              keyPath: 'id'
+            }); // creates restaurant object store
+            restaurantStore.createIndex('by-address', 'address'); // creates index for restaurant in relation to restaurant address
+            restaurantStore.createIndex('by-name', 'name'); // creates index for restaurant in relation to restaurant name
+          case 1:
+            const reviewsStore = upgradeDb.createObjectStore('reviews', {
+              keyPath: 'id'
+            }); //creates reviews object store
+            reviewsStore.createIndex('restaurant', 'restaurant_id'); // creates index for reviews in relation to restaurant id
+        }
+      });
+    }
+
+
+    // fetch restaurant data and put it in objectStore
+    static fetchRestaurantsForCache() {
+      return fetch(DBHelper.DATABASE_URL + 'restaurants')
+        .then(response => response.json())
+        .then(restaurants => {
+          return this.dbPromise()
+            .then(db => {
+              const tx = db.transaction('restaurants', 'readwrite');
+              let restaurantStore = tx.objectStore('restaurants');
+              restaurants.forEach(restaurant => restaurantStore.put(restaurant));
+
+              return tx.complete.then(() => Promise.resolve(restaurants));
+            });
+        });
+    }
 
   /**
    * Fetch all restaurants.
@@ -35,6 +79,31 @@ class DBHelper {
         callback(`Request failed. Failed due to following error: ${error}`, null);
       });
   }
+
+/**
+ * Favorite Status of restaurants
+ **/
+ static updateFavoriteStatus(restaurantId, isFavorite) {
+   console.log('State is: ', isFavorite);
+
+   fetch(`http://localhost:1337/restaurants/${restaurantId}/?is_favorite=${isFavorite}`, {
+     method: 'PUT'
+   })
+   .then(() => {
+     this.dbPromise()
+     .then(db => {
+       const tx = db.transaction('restaurants', 'readwrite');
+       const restaurantStore = tx.objectStore('restaurants');
+       restaurantStore.get(restaurantId)
+       .then(restaurant => {
+         restaurant.is_favorite = isFavorite;
+         restaurantStore.put(restaurant);
+       });
+     })
+   })
+ }
+
+
 
   /**
    * Fetch a restaurant by its ID.
@@ -179,42 +248,3 @@ class DBHelper {
   }
 
 }
-
-// Add idb
-const dbPromise = idb.open('restaurant-db', 1, upgradeDB => {
-  let restaurantStore = upgradeDB.createObjectStore('restaurants', { keyPath: 'id' });
-  restaurantStore.createIndex('by-address', 'address');
-  restaurantStore.createIndex('by-name', 'name');
-});
-
-// fetch restaurant data and put it in objectStore
-dbPromise.then(db => {
-  DBHelper.fetchRestaurants((error, restaurants) => {
-    if (error) {
-      callback(error, null);
-    } else {
-      const tx = db.transaction('restaurants', 'readwrite');
-      let restaurantStore = tx.objectStore('restaurants');
-
-      for (let restaurant in restaurants) {
-        restaurantStore.put(restaurants[restaurant]);
-      }
-
-      return tx.complete;
-    }
-  });
-});
-
-// dbPromise.then(db => {
-//   const tx = db.transaction('restaurants', 'readonly');
-//   let restaurantStore = tx.objectStore('restaurants');
-//
-//   for (let restaurant in restaurants) {
-//     restaurantStore.get(restaurants[restaurant]);
-//     debugger;
-//   }
-//
-//   return restaurantStore.getAll();
-// }).then((restaurants) => {
-//   console.log('Restaurant:', restaurants);
-// });
