@@ -1,3 +1,9 @@
+/**
+ * Credit and huge shout out goes to Elisa Romondia, Lorenzo Zaccagnini, Doug Brown, among
+ * others for their webinars. Other resources include MDN, W3C, the slack community, and
+ * various other random links from googling.
+ **/
+
 let restaurant;
 var newMap;
 
@@ -82,8 +88,10 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   if (restaurant.operating_hours) {
     fillRestaurantHoursHTML();
   }
+
   // fill reviews
-  fillReviewsHTML();
+  DBHelper.fetchRestaurantReviews(restaurant.id)
+  .then(reviews => fillReviewsHTML(reviews))
 }
 
 /**
@@ -136,8 +144,6 @@ createReviewHTML = (review) => {
   const div = document.createElement('div');
   li.appendChild(div);
 
-
-
   const name = document.createElement('p');
   name.classList.add('review-name'); // Adds class
   name.innerHTML = review.name;
@@ -145,7 +151,7 @@ createReviewHTML = (review) => {
 
   const date = document.createElement('p');
   date.classList.add('review-date'); // Adds class
-  date.innerHTML = review.date;
+  date.innerHTML = `${new Date(review.createdAt).toDateString()}`; // adds current date without timestamp
   div.appendChild(date);
 
   const rating = document.createElement('p');
@@ -159,6 +165,43 @@ createReviewHTML = (review) => {
 
   return li;
 }
+
+
+// Add review to restaurant page
+addReview = () => {
+  event.preventDefault();
+  let restaurantId = getParameterByName('id');
+  let name = document.getElementById('review-name').value;
+  let rating = document.querySelector('#review-rating option:checked').value;
+  let comments = document.getElementById('review-message').value;
+  const review = [name, rating, comments, restaurantId];
+
+  // Builds object data for restaurant page
+  const reviewForRestaurant = {
+    restaurant_id: parseInt(review[3]),
+    rating: parseInt(review[1]),
+    name: review[0],
+    comments: review[2].substring(0, 500),
+    createdAt: new Date()
+  };
+  // Sends review data to DB
+  DBHelper.addReview(reviewForRestaurant);
+  addReviewHTML(reviewForRestaurant);
+  document.getElementById('review-form').reset();
+}
+
+addReviewHTML = (review) => {
+  if (document.getElementById('no-review')) {
+    document.getElementById('no-review').remove();
+  }
+  const container = document.getElementById('reviews-container');
+  const ul = document.getElementById('reviews-list');
+
+  // adds new review to top of reviews on restaurant page
+  ul.insertBefore(createReviewHTML(review), ul.firstChild);
+  container.appendChild(ul);
+}
+
 
 /**
  * Add restaurant name to the breadcrumb navigation menu
