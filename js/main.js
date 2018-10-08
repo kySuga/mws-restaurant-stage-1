@@ -1,7 +1,7 @@
 /**
  * Credit and huge shout out goes to Elisa Romondia, Lorenzo Zaccagnini, Doug Brown, among
- * others for their webinars. Other resources include MDN, and various other random links
- * from googling.
+ * others for their webinars. Other resources include MDN, W3C, the slack community, and
+ * various other random links from googling.
  **/
 
 let restaurants,
@@ -195,14 +195,14 @@ createRestaurantHTML = (restaurant) => {
 
 // state changes for favorite button
 changeStateForFavorite = (el, fav) => {
-  if (!fav) {
+  if (fav) { // if it's a favorite
+    el.classList.remove('fav_notyum');
+    el.classList.add('fav_yum');
+    el.setAttribute('aria-label', 'remove favorite status');
+  } else  { // if it's not a favorite
     el.classList.remove('fav_yum');
     el.classList.add('fav_notyum');
     el.setAttribute('aria-label', 'mark as favorite');
-  } else {
-    el.classList.remove('fav_notyum');
-    el.classList.add('fav_yum');
-    el.setAttribute('aria-label', 'remove as favorite');
   }
 }
 

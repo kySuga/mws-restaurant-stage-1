@@ -1,7 +1,7 @@
 /**
  * Credit and huge shout out goes to Elisa Romondia, Lorenzo Zaccagnini, Doug Brown, among
- * others for their webinars. Other resources include MDN, and various other random links
- * from googling.
+ * others for their webinars. Other resources include MDN, W3C, the slack community, and
+ * various other random links from googling.
  **/
 
 /**
@@ -15,14 +15,14 @@ class DBHelper {
    */
   static get DATABASE_URL() {
     const port = 1337 // Change this to your server port
-    return `http://localhost:${port}/restaurants`;
+    return `http://localhost:${port}/`;
   }
 
   /**
    * Add idb
    **/
     static dbPromise() {
-      return idb.open('restaurant-db', 2, upgradeDb => {
+      return idb.open('restaurant-db', 3, upgradeDb => {
         switch (upgradeDb.replaceVersion) {
           case 0:
             const restaurantStore = upgradeDb.createObjectStore('restaurants', {
@@ -61,7 +61,7 @@ class DBHelper {
    */
   static fetchRestaurants(callback, id) {
     let restaurantInfo;
-    const contentTransfer = DBHelper.DATABASE_URL;
+    const contentTransfer = DBHelper.DATABASE_URL + 'restaurants';
     if (!id) {
       restaurantInfo = `${contentTransfer}`;
     } else {
@@ -84,7 +84,6 @@ class DBHelper {
  * Favorite Status of restaurants
  **/
  static updateFavoriteStatus(restaurantId, isFavorite) {
-   console.log('State is: ', isFavorite);
 
    fetch(`http://localhost:1337/restaurants/${restaurantId}/?is_favorite=${isFavorite}`, {
      method: 'PUT'
@@ -93,11 +92,11 @@ class DBHelper {
      this.dbPromise()
      .then(db => {
        const tx = db.transaction('restaurants', 'readwrite');
-       const restaurantStore = tx.objectStore('restaurants');
-       restaurantStore.get(restaurantId)
+       const restaurantsStore = tx.objectStore('restaurants');
+       restaurantsStore.get(restaurantId)
        .then(restaurant => {
          restaurant.is_favorite = isFavorite;
-         restaurantStore.put(restaurant);
+         restaurantsStore.put(restaurant);
        });
      })
    })
@@ -245,6 +244,134 @@ class DBHelper {
       })
       marker.addTo(newMap);
     return marker;
+  }
+
+  /**
+   * Fetch all reviews
+   **/
+   static storeIndexedDB(table, objects) {
+     this.dbPromise.then(function(db) {
+       if (!db) return;
+
+       let tx = db.transaction(table, 'readwrite');
+       const store = tx.objectStore(table);
+       if (Array.isArray(objects)) {
+         objects.forEach(function(object) {
+           store.put(object);
+         });
+       } else {
+         store.put(objects);
+       }
+     });
+   }
+
+
+// returns reviews and stores them in indexedDB
+  static getStoredObjectById(table, idx, id) {
+    return this.dbPromise()
+      .then(function(db) {
+        if (!db) return;
+
+        const store = db.transaction(table).objectStore(table);
+        const indexId = store.index(idx);
+        return indexId.getAll(id);
+      });
+  }
+
+  /**
+   * Fetch all reviews for a restaurant by the restaurant id
+   **/
+  static fetchRestaurantReviews(id) {
+    return fetch(`${DBHelper.DATABASE_URL}reviews/?restaurant_id=${id}`)
+    .then(response => response.json())
+    .then(reviews => {
+      this.dbPromise()
+      .then(db => {
+        if (!db) return;
+
+        let tx = db.transaction('reviews', 'readwrite');
+        const store = tx.objectStore('reviews');
+        if (Array.isArray(reviews)) {
+          reviews.forEach(function(review) {
+            store.put(review);
+          });
+        } else {
+          store.put(reviews);
+        }
+      });
+      console.log('reviews are: ', reviews);
+      return Promise.resolve(reviews);
+    })
+    .catch(error => {
+      return DBHelper.getStoredObjectById('reviews', 'restaurant', id)
+      .then((storedReviews) => {
+        return Promise.resolve(storedReviews);
+      })
+    });
+  }
+
+  // Add the review
+  static addReview(review) {
+    let whenOffline_obj = {
+      name: 'addReview',
+      data: review,
+      object_type: 'review'
+    };
+
+    console.log('addReview output: ', addReview);
+    // checking to see if online
+    if (!navigator.online && (whenOffline_obj.name === 'addReview')) {
+       DBHelper.updateDataOnline(whenOffline_obj);
+       return;
+    }
+    let reviewSend = {
+      "name": review.name,
+      "rating": parseInt(review.rating),
+      "comments": review.comments,
+      "restaurant_id": parseInt(review.restaurant_id)
+    };
+    console.log('reviewSent output: ', reviewSend);
+    let fetch_options = {
+      method: 'POST',
+      body: JSON.stringify(reviewSend),
+      headers: new Headers({
+        'Content-Type': 'application/json'
+      })
+    };
+    fetch(`http://localhost:1337/reviews`, fetch_options)
+      .then((response) => {
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.indexOf('application/json') !== -1) {
+        return response.json();
+      } else {
+        return 'API call failed'
+      }})
+      .then((data) => {console.log(`Fetch was a hit!`)})
+      .catch(error => console.log('Ruh roh, here is the error: ', error));
+  }
+
+  static updateDataOnline(whenOffline_obj) {
+    console.log('whenOffline Object ', whenOffline_obj);
+    localStorage.setItem('data', JSON.stringify(whenOffline_obj.data));
+    console.log(`Local Storage: ${whenOffline_obj.object_type} stored`);
+    window.addEventListener('online', (event) => {
+      console.log('Das Browser is online');
+      let data = JSON.parse(localStorage.getItem('data'));
+      [...document.querySelectorAll(".reviews_offline")] // check for reviews_offline
+      .forEach(el => {
+        el.classList.remove("reviews_offline")
+        el.querySelector(".offline_label").remove()
+      });
+      if (data !== null) {
+        console.log(data);
+        if (whenOffline_obj.name === 'addReview') {
+          DBHelper.addReview(whenOffline_obj.data);
+        }
+
+        localStorage.removeItem('data');
+        console.log(`Local Storage: ${whenOffline_obj.object_type} removed`);
+      }
+    });
   }
 
 }
