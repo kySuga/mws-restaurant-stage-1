@@ -51,11 +51,55 @@
         </section>
         <!-- end restaurant -->
       </div>
-      <!-- Beginning reviews -->
-      <section id="reviews-container">
+
+      <!-- Review Section -->
+      <div class="review-container">
+        <div class="review-form-container">
+        <!-- Customer Review Form -->
+          <h2 id="RestReviewForm">Post a Review</h2>
+          <form id="review-form" role="form" aria-label="Restaurant Review Form">
+            <ul aria-labeledby="RestReviewForm">
+              <li>
+                <input id="restaurant-id" type="hidden" name="restaurant_id">
+              </li>
+              <li class="name field">
+                <label for="ReviewFullName" aria-label="Enter Reviewer's Full Name">Full Name</label><br>
+                <input id="review-name" type="text" name="reviewFullName">
+              </li>
+              <li>
+                <label for="ReviewRating" aria-label="Enter Rating For Review">Review Rating</label><br>
+                <select id="review-rating" name="reviewRating">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+              </li>
+              <!-- <li class="rating field">
+                <label for="ReviewRating" aria-label="Enter Rating For Review">Review Rating</label><br>
+                <input id="review-rating" type="number" min="0" max="5" step="1" name="reviewRating">
+              </li> -->
+              <li class="review field">
+                <label for="ReviewMessage" aria-label="Add your review">Your Review</label><br>
+                <textarea id="review-message" name="reviewMessage" rows="10" cols="30"></textarea>
+              </li>
+              <li>
+                <button class="btn" type="button" aria-label="Submit Review Button" onclick="addReview()">Submit Review</button>
+              </li>
+            </ul>
+          </form>
+        <!-- End Customer Review Form -->
+        </div>
+        <div class="reviews-container">
+        <!-- Beginning reviews -->
+        <section id="reviews-container">
         <ul id="reviews-list"></ul>
-      </section>
-      <!-- End reviews -->
+        </section>
+        <!-- End reviews -->
+        </div>
+      </div>
+
     </main>
     <!-- End main -->
 
