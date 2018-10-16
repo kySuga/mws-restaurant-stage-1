@@ -160,6 +160,7 @@ createReviewHTML = (review) => {
   li.appendChild(rating);
 
   const comments = document.createElement('p');
+  comments.classList.add('review-message'); // Adds Class
   comments.innerHTML = review.comments;
   li.appendChild(comments);
 
