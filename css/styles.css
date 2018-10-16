@@ -405,6 +405,10 @@ nav#main-nav h1 a {
 	background-color: #252831;
 }
 
+#reviews-list li {
+  width: 100%;
+}
+
 #reviews-list li p {
   margin: 0 0 10px;
 	font-size: 1.5em;
