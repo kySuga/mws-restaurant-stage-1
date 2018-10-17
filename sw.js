@@ -12,7 +12,8 @@ const cachedAssets = [
   '/css/styles.css',
   '/js/main.js',
   '/js/dbhelper.js',
-  '/js/restaurant_info.js'
+  '/js/restaurant_info.js',
+  '/js/idb.js'
 ];
 
 // Installs cache for static assets
@@ -36,6 +37,8 @@ self.addEventListener('fetch', fetchEvent => {
         return responseFromCache;
       }
       return fetch(request);
+      // Can also add the requests in the cache dynamically here. Link to learn: https://developers.google.com/web/ilt/pwa/caching-files-with-service-worker
+      // Thank you for the feedback. I will look into this further.
     })
   );
 });
