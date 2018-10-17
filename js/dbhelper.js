@@ -1,7 +1,7 @@
 /**
  * Credit and huge shout out goes to Elisa Romondia, Lorenzo Zaccagnini, Doug Brown, among
  * others for their webinars. Other resources include MDN, W3C, the slack community, and
- * various other random links from googling.
+ * various other random links from googling. Also, I cannot forget the reviewers. Thank you for your very helpful feedback!
  **/
 
 /**
@@ -263,7 +263,7 @@
 
     console.log('addReview output: ', addReview);
     // checking to see if online
-    if (!navigator.online && (whenOffline_obj.name === 'addReview')) {
+    if (!navigator.onLine && (whenOffline_obj.name === 'addReview')) {
        DBHelper.updateDataOnline(whenOffline_obj);
        return;
     }
@@ -298,6 +298,7 @@
     static updateDataOnline(whenOffline_obj) {
       console.log('whenOffline Object ', whenOffline_obj);
       localStorage.setItem('data', JSON.stringify(whenOffline_obj.data));
+      // Better to store reviews in IDB while offline. Thank you for the feedback, I will look into implementing.
       console.log(`Local Storage: ${whenOffline_obj.object_type} stored`);
       window.addEventListener('online', (event) => {
         console.log('Das Browser is online');
