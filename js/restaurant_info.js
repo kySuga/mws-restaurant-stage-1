@@ -1,7 +1,7 @@
 /**
  * Credit and huge shout out goes to Elisa Romondia, Lorenzo Zaccagnini, Doug Brown, among
  * others for their webinars. Other resources include MDN, W3C, the slack community, and
- * various other random links from googling.
+ * various other random links from googling. Also, I cannot forget the reviewers. Thank you for your very helpful feedback!
  **/
 
 let restaurant;
